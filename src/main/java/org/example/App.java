@@ -1,9 +1,12 @@
 package org.example;
 
 import entidades.Doctor;
+import entidades.Paciente;
 import org.hibernate.Session;
 import repositorios.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 /**
@@ -139,7 +142,7 @@ public class App {
             switch (opcion) {
 
                 case 1: {
-                    System.out.println("Opcion 1.1");
+                    crearPaciente(session);
                     break;
                 }
                 case 2: {
@@ -164,6 +167,19 @@ public class App {
         } while (opcion != 4);
 
     }
+
+    private static void crearPaciente(Session session) {
+
+        String nombre = pedirString("Introduce el nombre del paciente");
+        LocalDate fechaNacimiento = pedirFecha("Introduce la fecha de nacimiento del paciente con formato dd/mm/aaaa");
+        String direccion = pedirString("Introduce la dirección del paciente");
+        pacienteRepositorio = new PacienteRepositorio(session);
+        int siguienteId = pacienteRepositorio.obtenerSiguienteId(); // Obtengo el último id registrado y le sumo 1
+        Paciente paciente = new Paciente(siguienteId,nombre,fechaNacimiento,direccion);
+        pacienteRepositorio.guardar(paciente);
+
+    }
+
 
     private static void menuDoctor(Session session) {
 
@@ -232,5 +248,29 @@ public class App {
         System.out.println(mensaje);
         return entrada.next();
 
+    }
+
+    private static LocalDate pedirFecha(String mensaje) {
+
+        entrada = new Scanner(System.in);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate fecha = null;
+        System.out.println(mensaje);
+
+        while(fecha == null){
+
+
+            String cadena = entrada.nextLine();
+
+            try{
+                fecha = LocalDate.parse(cadena,formatter);
+            } catch (Exception e) {
+                System.out.println("Formato de fecha incorrecto, por favor, introduce la fecha " +
+                        "en formato dd/mm/aaaa");
+            }
+
+        }
+
+        return fecha;
     }
 }

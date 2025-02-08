@@ -1,9 +1,7 @@
 package entidades;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -13,17 +11,22 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 
 
 public class Paciente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
+    @NonNull
     private int id;
+    @NonNull
     private String nombre;
     @Column(name="fecha_nacimiento")
+    @NonNull
     private LocalDate fechaNacimiento;
+    @NonNull
     private String direccion;
 
     @OneToMany(mappedBy = "paciente")

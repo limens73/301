@@ -68,6 +68,7 @@ public class PacienteRepositorio implements Repositorio <Paciente>{
                 .getSingleResult();
         trx.commit();
 
+
         return ultimoId != null ? ultimoId +1 : 1;
     }
 }
