@@ -1,9 +1,7 @@
 package entidades;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
@@ -11,22 +9,27 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 
 public class Doctor {
 
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="id")
+    @NonNull
     private int id;
+    @NonNull
     private String nombre;
+    @NonNull
     private String especialidad;
+    @NonNull
     private String telefono;
 
 
 
-    @OneToOne(mappedBy ="doctor")
+    @OneToOne(mappedBy ="doctor",cascade = CascadeType.ALL) // Cascade debido a que El objeto hijo (Cita) debe eliminarse si se borra el padre (Doctor)
     private Cita cita;
 
 
