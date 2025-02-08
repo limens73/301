@@ -28,8 +28,9 @@ public class Doctor {
     private String telefono;
 
 
-
-    @OneToOne(mappedBy ="doctor",cascade = CascadeType.ALL) // Cascade debido a que El objeto hijo (Cita) debe eliminarse si se borra el padre (Doctor)
+    // La notación cascade siempre se ubica en la anotación de relación que lleva el mappedBy.
+    // Cascade debido a que El objeto hijo (Cita) debe eliminarse si se borra el padre (Doctor)
+    @OneToOne(mappedBy ="doctor",cascade = CascadeType.ALL)
     private Cita cita;
 
 

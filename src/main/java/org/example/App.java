@@ -2,32 +2,235 @@ package org.example;
 
 import entidades.Doctor;
 import org.hibernate.Session;
-import repositorios.DoctorRepositorio;
+import repositorios.*;
+
+import java.util.Scanner;
 
 /**
  * Hello world!
- *
  */
-public class App 
-{
+public class App {
+    static Scanner entrada;
     static DoctorRepositorio doctorRepositorio;
+    static CitaRepositorio citaRepositorio;
+    static HospitalRepositorio hospitalRepositorio;
+    static PacienteRepositorio pacienteRepositorio;
+    static TratamientoRepositorio tratamientoRepositorio;
 
     public static void main(String[] args) {
-        System.out.println("Test");
 
+        entrada = new Scanner(System.in);
+        System.out.println("Gestión hospitalaria");
         Session session = HibernateUtil.get().openSession();
+        menuPrincipal(session);
 
-        // Desde aquí...
-
-        doctorRepositorio = new DoctorRepositorio(session);
-        Doctor doctor = new Doctor(doctorRepositorio.obtenerSiguienteId(), "Pedro","Neurología","649270131");
-        doctorRepositorio.guardar(doctor);
-        doctor = doctorRepositorio.encontrarUnoPorId(2);
-        doctorRepositorio.eliminar(doctor);
-
-        // Hasta aquí, son pruebas
 
         session.close();
         System.out.println("Finalizando la conexion a MySQL");
+    }
+
+    private static void menuPrincipal(Session session) {
+
+        int opcion = -1;
+
+        do {
+
+            System.out.println("\n1- Crear, borrar (por id) y modificar los datos de un doctor." +
+                    "\n2- Crear, borrar (por nombre) y modificar los datos de un paciente." +
+                    "\n3- Asignar un doctor a un paciente." +
+                    "\n4- Indicar la fecha de fin del tratamiento de un paciente." +
+                    "\n5- Cambiar el hospital de un tratamiento." +
+                    "\n6- Mostrar los datos de un Paciente (id, nombre, fecha_nacimiento, direccion, tratamientos que recibe y citas que tiene)." +
+                    "\n7- Mostrar los datos de los tratamientos y el hospital en el que se realiza." +
+                    "\n8- Mostrar el número total de tratamientos que tiene cada hospital." +
+                    "\n9- Salir\n");
+
+            try {
+                opcion = entrada.nextInt();
+
+            } catch (Exception e) {
+                entrada.nextLine();
+                opcion = 0;
+                System.out.println("La selección debe ser un número del 1 al 9");
+
+
+            }
+
+            switch (opcion) {
+
+
+                case 1: {
+                    menuDoctor(session);
+                    break;
+                }
+
+                case 2: {
+                    menuPaciente(session);
+                    break;
+                }
+
+                case 3: {
+                    System.out.println("Opción 3");
+                    break;
+                }
+
+                case 4: {
+                    System.out.println("Opción 4");
+                    break;
+                }
+
+                case 5: {
+                    System.out.println("Opción 5");
+                    break;
+                }
+
+                case 6: {
+                    System.out.println("Opción 6");
+                    break;
+                }
+
+                case 7: {
+                    System.out.println("Opción 7");
+                    break;
+                }
+
+                case 8: {
+                    System.out.println("Opción 8");
+                    break;
+                }
+
+                case 9: {
+                    System.exit(0);
+                    break;
+                }
+
+                default:
+                    System.out.println("Opción no válida. Por favor, elige una opción correcta.");
+
+
+            }
+
+
+        } while (true);
+
+    }
+
+    private static void menuPaciente(Session session) {
+
+
+        int opcion =-1;
+
+        do {
+            System.out.println("\n1- Crear los datos de un paciente." +
+                    "\n2- Borrar, (por id) los datos de un paciente." +
+                    "\n3- Modificar los datos de un paciente." +
+                    "\n4- Regresar\n");
+
+            try {
+                opcion = entrada.nextInt();
+            } catch (Exception e) {
+                entrada.nextLine();
+                opcion = 0;
+                System.out.println("La selección debe ser un número del 1 al 4");
+
+            }
+
+
+            switch (opcion) {
+
+                case 1: {
+                    System.out.println("Opcion 1.1");
+                    break;
+                }
+                case 2: {
+                    System.out.println("Opcion 1.2");
+                    break;
+                }
+                case 3: {
+                    System.out.println("Opcion 1.3");
+                    break;
+                }
+                case 4: {
+                    menuPrincipal(session);
+                    break;
+                }
+                default:
+                    System.out.println("Opción no válida. Por favor, elige una opción correcta.");
+
+
+            }
+
+
+        } while (opcion != 4);
+
+    }
+
+    private static void menuDoctor(Session session) {
+
+        int opcion =-1;
+
+        do {
+            System.out.println("\n1- Crear los datos de un doctor." +
+                    "\n2- Borrar, (por id) los datos de un doctor." +
+                    "\n3- Modificar los datos de un doctor." +
+                    "\n4- Regresar\n");
+
+            try {
+                opcion = entrada.nextInt();
+            } catch (Exception e) {
+                entrada.nextLine();
+                opcion = 0;
+                System.out.println("La selección debe ser un número del 1 al 4");
+
+            }
+
+
+            switch (opcion) {
+
+                case 1: {
+                    crearDoctor(session);
+                    break;
+                }
+                case 2: {
+                    System.out.println("Opcion 1.2");
+                    break;
+                }
+                case 3: {
+                    System.out.println("Opcion 1.3");
+                    break;
+                }
+                case 4: {
+                    menuPrincipal(session);
+                    break;
+                }
+                default:
+                    System.out.println("Opción no válida. Por favor, elige una opción correcta.");
+
+
+            }
+
+
+        } while (opcion != 4);
+
+    }
+
+    private static void crearDoctor(Session session) {
+
+
+        String nombre = pedirString("Introduce el nombre del doctor");
+        String especialidad = pedirString("Introduce la especialidad del doctor");
+        String telefono = pedirString("Introduce el teléfono del doctor");
+        doctorRepositorio = new DoctorRepositorio(session);
+        int siguienteId = doctorRepositorio.obtenerSiguienteId(); // Obtengo el último id registrado y le sumo 1
+        Doctor doctor = new Doctor(siguienteId,nombre,especialidad,telefono);
+        doctorRepositorio.guardar(doctor);
+
+    }
+
+    private static String pedirString(String mensaje) {
+
+        System.out.println(mensaje);
+        return entrada.next();
+
     }
 }
