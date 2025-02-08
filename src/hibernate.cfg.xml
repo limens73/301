@@ -3,12 +3,18 @@
 <hibernate-configuration>
     <session-factory>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/empleados?createDatabaseIfNotExist=true&amp;serverTimezone=UTC</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/hospitaldb?createDatabaseIfNotExist=true&amp;serverTimezone=UTC</property>
         <property name="connection.username">pablo</property>
         <property name="connection.password">abc123.</property>
         <property name="hbm2ddl.auto">validate</property>
         <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
         <property name="hibernate.dialect.storage_engine">innodb</property>
         <property name="hibernate.show_sql">true</property>
+        <mapping class="entidades.Doctor"/>
+        <mapping class="entidades.Hospital"/>
+        <mapping class="entidades.Tratamiento"/>
+        <mapping class="entidades.Paciente"/>
+        <mapping class="entidades.Recibe"/>
+        <mapping class="entidades.Cita"/>
     </session-factory>
 </hibernate-configuration>
