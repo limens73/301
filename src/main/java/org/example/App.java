@@ -208,11 +208,11 @@ public class App {
                     break;
                 }
                 case 2: {
-                    System.out.println("Opcion 1.2");
+                    borrarDoctor(session);
                     break;
                 }
                 case 3: {
-                    System.out.println("Opcion 1.3");
+                    modificarDoctor(session);
                     break;
                 }
                 case 4: {
@@ -227,6 +227,48 @@ public class App {
 
 
         } while (opcion != 4);
+
+    }
+
+    private static void modificarDoctor(Session session) {
+
+
+        int id = pedirInt("Introduce el id del doctor:");
+        Doctor doctor;
+        doctorRepositorio = new DoctorRepositorio(session);
+
+        try {
+            doctor = doctorRepositorio.encontrarUnoPorId(id);
+
+            String nombre = pedirString("Introduce el nombre del doctor");
+            String especialidad = pedirString("Introduce la especialidad del doctor");
+            String telefono = pedirString("Introduce el teléfono del doctor");
+
+            doctor.setNombre(nombre);
+            doctor.setEspecialidad(especialidad);
+            doctor.setTelefono(telefono);
+
+
+            doctorRepositorio.actualizar(doctor);
+        } catch (Exception e) {
+            System.out.println("No se ha encontrado ningún doctor con ese id.");
+        }
+
+
+    }
+
+    private static void borrarDoctor(Session session) {
+
+        int id = pedirInt("Introduce el id del doctor:");
+        doctorRepositorio = new DoctorRepositorio(session);
+
+        try {
+            doctorRepositorio.eliminar(doctorRepositorio.encontrarUnoPorId(id));
+        } catch (Exception e) {
+            System.out.println("No se ha encontrado ningún doctor con ese id.");
+        }
+
+
 
     }
 
@@ -248,6 +290,18 @@ public class App {
         System.out.println(mensaje);
         return entrada.next();
 
+    }
+
+    private static int pedirInt(String mensaje) {
+        System.out.println(mensaje);
+
+        while(!entrada.hasNextInt()){
+
+            System.out.println("El identificador del doctor debe ser un número");
+            entrada.next();
+        }
+
+        return entrada.nextInt();
     }
 
     private static LocalDate pedirFecha(String mensaje) {

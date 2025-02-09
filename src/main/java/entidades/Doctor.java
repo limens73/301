@@ -33,5 +33,10 @@ public class Doctor {
     @OneToOne(mappedBy ="doctor",cascade = CascadeType.ALL)
     private Cita cita;
 
+    @Override
+    public String toString() {
+        return "Doctor{id=" + id + ", nombre='" + nombre + "', especialidad='" + especialidad + "', telefono='" + telefono + "'}";
+    }
+
 
 }
