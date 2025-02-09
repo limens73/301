@@ -153,7 +153,7 @@ public class App {
                     break;
                 }
                 case 3: {
-                    System.out.println("Opcion 1.3");
+                    modificarPaciente(session);
                     break;
                 }
                 case 4: {
@@ -168,6 +168,36 @@ public class App {
 
 
         } while (opcion != 4);
+
+    }
+
+    private static void modificarPaciente(Session session) {
+
+        int id = pedirInt("Introduce el id del paciente:");
+        Paciente paciente;
+        pacienteRepositorio = new PacienteRepositorio(session);
+
+        try {
+            paciente = pacienteRepositorio.encontrarUnoPorId(id);
+
+            entrada.nextLine();
+            System.out.println("Introduce el nombre del paciente");
+            String nombre = entrada.nextLine();
+            System.out.println("Introduce la dirección del paciente");
+            String direccion = entrada.nextLine();
+            LocalDate fechaNacimiento = pedirFecha("Introduce la fecha de nacimiento del paciente con formato dd/mm/aaaa");
+
+            paciente.setNombre(nombre);
+            paciente.setDireccion(direccion);
+            paciente.setFechaNacimiento(fechaNacimiento);
+
+
+            pacienteRepositorio.actualizar(paciente);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("No se ha encontrado ningún paciente con ese id.");
+        }
+
 
     }
 

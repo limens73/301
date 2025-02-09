@@ -37,7 +37,7 @@ public class PacienteRepositorio implements Repositorio <Paciente>{
     @Override
     public Paciente encontrarUnoPorId(int id) {
         Transaction trx = session.beginTransaction();
-        Paciente paciente = session.createQuery("select p from Paciente where p.id=:idP",Paciente.class)
+        Paciente paciente = session.createQuery("select p from Paciente p where p.id=:idP",Paciente.class)
                 .setParameter("idP",id)
                 .getSingleResult();
         trx.commit();
