@@ -3,6 +3,8 @@ package entidades;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 
 @Entity
 @Table(name="doctor")
@@ -39,4 +41,16 @@ public class Doctor {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Doctor doctor = (Doctor) o;
+        return id == doctor.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

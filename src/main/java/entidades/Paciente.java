@@ -29,6 +29,7 @@ public class Paciente {
     @NonNull
     private String direccion;
 
+
     @OneToMany(mappedBy = "paciente")
     private Set<Cita> citas;
 
@@ -39,7 +40,17 @@ public class Paciente {
 
     }
 
+
     @OneToMany(mappedBy = "paciente")
     private Set<Recibe> listaRecibe;
 
+    @Override
+    public String toString() {
+        return "Paciente{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", fechaNacimiento=" + fechaNacimiento +
+                ", direccion='" + direccion + '\'' +
+                '}';
+    }
 }

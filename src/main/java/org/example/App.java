@@ -3,10 +3,12 @@ package org.example;
 import entidades.Doctor;
 import entidades.Paciente;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import repositorios.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -124,8 +126,9 @@ public class App {
         int opcion =-1;
 
         do {
-            System.out.println("\n1- Crear los datos de un paciente." +
-                    "\n2- Borrar, (por id) los datos de un paciente." +
+
+        System.out.println("\n1- Crear los datos de un paciente." +
+                    "\n2- Borrar, (por nombre) los datos de un paciente." +
                     "\n3- Modificar los datos de un paciente." +
                     "\n4- Regresar\n");
 
@@ -146,7 +149,7 @@ public class App {
                     break;
                 }
                 case 2: {
-                    System.out.println("Opcion 1.2");
+                    borrarPaciente(session);
                     break;
                 }
                 case 3: {
@@ -168,11 +171,54 @@ public class App {
 
     }
 
+    private static void borrarPaciente(Session session) {
+
+        entrada.nextLine();
+        System.out.println("Introduce el nombre del paciente");
+        String nombre = entrada.nextLine();
+        Transaction trx = session.beginTransaction();
+
+        try {
+            List<Paciente> pacientes = session.createQuery(
+                            "select p from Paciente p where p.nombre=:nombreP", Paciente.class)
+                    .setParameter("nombreP", nombre)
+                    .getResultList();
+
+            if (pacientes.isEmpty()) {
+                System.out.println("No se ha encontrado un paciente con ese nombre.");
+                return;
+            }
+
+            Paciente paciente = pacientes.get(0);
+
+            // Primero elimino las citas con consultas HQL
+            session.createQuery("DELETE FROM Cita c WHERE c.paciente = :paciente")
+                    .setParameter("paciente", paciente)
+                    .executeUpdate();
+            // Luego elimino los registros Rebibe en el que se encuentre el cliente
+            session.createQuery("DELETE FROM Recibe r WHERE r.paciente = :paciente")
+                    .setParameter("paciente", paciente)
+                    .executeUpdate();
+
+            // Luego elimino el paciente
+            session.remove(paciente);
+
+            trx.commit();
+            System.out.println("Paciente eliminado correctamente.");
+        } catch (Exception e) {
+
+            System.out.println("Error al eliminar paciente: " + e.getMessage());
+        }
+    }
+
     private static void crearPaciente(Session session) {
 
-        String nombre = pedirString("Introduce el nombre del paciente");
+        entrada.nextLine();
+        System.out.println("Introduce el nombre del paciente");
+        String nombre = entrada.nextLine();
+        System.out.println("Introduce la dirección del paciente");
+        String direccion = entrada.nextLine();
         LocalDate fechaNacimiento = pedirFecha("Introduce la fecha de nacimiento del paciente con formato dd/mm/aaaa");
-        String direccion = pedirString("Introduce la dirección del paciente");
         pacienteRepositorio = new PacienteRepositorio(session);
         int siguienteId = pacienteRepositorio.obtenerSiguienteId(); // Obtengo el último id registrado y le sumo 1
         Paciente paciente = new Paciente(siguienteId,nombre,fechaNacimiento,direccion);
@@ -240,9 +286,13 @@ public class App {
         try {
             doctor = doctorRepositorio.encontrarUnoPorId(id);
 
-            String nombre = pedirString("Introduce el nombre del doctor");
-            String especialidad = pedirString("Introduce la especialidad del doctor");
-            String telefono = pedirString("Introduce el teléfono del doctor");
+            entrada.nextLine();
+            System.out.println("Introduce el nombre del doctor");
+            String nombre = entrada.nextLine();
+            System.out.println("Introduce la especialidad del doctor");
+            String especialidad = entrada.nextLine();
+            System.out.println("Introduce el teléfono del doctor");
+            String telefono = entrada.nextLine();
 
             doctor.setNombre(nombre);
             doctor.setEspecialidad(especialidad);
@@ -268,16 +318,17 @@ public class App {
             System.out.println("No se ha encontrado ningún doctor con ese id.");
         }
 
-
-
     }
 
     private static void crearDoctor(Session session) {
 
-
-        String nombre = pedirString("Introduce el nombre del doctor");
-        String especialidad = pedirString("Introduce la especialidad del doctor");
-        String telefono = pedirString("Introduce el teléfono del doctor");
+        entrada.nextLine();
+        System.out.println("Introduce el nombre del doctor:");
+        String nombre = entrada.nextLine();
+        System.out.println("Introduce la especialidad del doctor:");
+        String especialidad = entrada.nextLine();
+        System.out.println("Introduce el teléfono del doctor");
+        String telefono = entrada.nextLine();
         doctorRepositorio = new DoctorRepositorio(session);
         int siguienteId = doctorRepositorio.obtenerSiguienteId(); // Obtengo el último id registrado y le sumo 1
         Doctor doctor = new Doctor(siguienteId,nombre,especialidad,telefono);
@@ -285,12 +336,7 @@ public class App {
 
     }
 
-    private static String pedirString(String mensaje) {
 
-        System.out.println(mensaje);
-        return entrada.next();
-
-    }
 
     private static int pedirInt(String mensaje) {
         System.out.println(mensaje);
@@ -300,6 +346,7 @@ public class App {
             System.out.println("El identificador del doctor debe ser un número");
             entrada.next();
         }
+
 
         return entrada.nextInt();
     }

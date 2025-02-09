@@ -71,4 +71,16 @@ public class PacienteRepositorio implements Repositorio <Paciente>{
 
         return ultimoId != null ? ultimoId +1 : 1;
     }
+
+
+    public Paciente encontrarIdPorNombre(String nombre) {
+        Transaction trx = session.beginTransaction();
+        Paciente paciente = session.createQuery("select p from Paciente p where p.nombre=:nombreP",Paciente.class)
+                .setParameter("nombreP",nombre)
+                .getResultList().get(0);
+        trx.commit();
+        return paciente;
+    }
+
+
 }

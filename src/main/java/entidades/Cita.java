@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name="cita")
@@ -45,5 +46,16 @@ public class Cita {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cita cita = (Cita) o;
+        return id == cita.id;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
