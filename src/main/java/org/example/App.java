@@ -1,8 +1,6 @@
 package org.example;
 
-import entidades.Cita;
-import entidades.Doctor;
-import entidades.Paciente;
+import entidades.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import repositorios.*;
@@ -22,6 +20,7 @@ public class App {
     static HospitalRepositorio hospitalRepositorio;
     static PacienteRepositorio pacienteRepositorio;
     static TratamientoRepositorio tratamientoRepositorio;
+    static RecibeRepositorio recibeRepositorio;
 
     public static void main(String[] args) {
 
@@ -81,7 +80,7 @@ public class App {
                 }
 
                 case 4: {
-                    System.out.println("Opción 4");
+                    asignarTratamientoPaciente(session);
                     break;
                 }
 
@@ -118,6 +117,78 @@ public class App {
 
 
         } while (true);
+
+    }
+
+    private static void asignarTratamientoPaciente(Session session) {
+
+        entrada = new Scanner(System.in);
+        System.out.println("Introduce el nombre del paciente");
+        String nombrePaciente = entrada.nextLine();
+
+        List<Paciente> pacientes = session.createQuery("select p from Paciente p where p.nombre =: nomP",Paciente.class)
+                .setParameter("nomP",nombrePaciente).getResultList();
+
+        Paciente paciente = null;
+        if (!pacientes.isEmpty()){
+            paciente = pacientes.get(0);
+        }
+        if (paciente == null){
+            System.out.println("No se encontró un paciente con ese nombre.");
+        }else {
+
+            int idPaciente = paciente.getId(); // Este es el caso válido en el que sí existe el paciente con el nombre dado.
+
+            System.out.println("Introduce el nombre del tratamiento");
+            String tipoTratamiento = entrada.nextLine();
+
+            List<Tratamiento> tratamientos = session.createQuery("select t from Tratamiento t where t.tipo =: nomT",Tratamiento.class)
+                    .setParameter("nomT",tipoTratamiento)
+                    .getResultList();
+
+            Tratamiento tratamiento = null;
+
+            if(!tratamientos.isEmpty()){
+                tratamiento = tratamientos.get(0);
+            }
+
+            if(tratamiento == null){
+
+                System.out.println("No se encontró un tratamiento con ese nombre");
+            }else {
+
+               int idTratamiento = tratamiento.getId();
+               LocalDate fechaInicio;
+               LocalDate fechaFin;
+               do{
+                   fechaInicio = pedirFecha("Introduce la fecha de inicio de tratamiento con formato dd/mm/aaaa");
+                   fechaFin = pedirFecha("Introduce la fecha de fin de tratamiento con formato dd/mm/aaaa");
+
+                   if(fechaFin.isBefore(fechaInicio)){
+                       System.out.println("La fecha de inicio no puede ser posterior a la de fin del tratamiento");
+                   }
+
+               }while(fechaFin.isBefore(fechaInicio));
+
+                try {
+
+                    RecibePk recibePk = new RecibePk(idPaciente,idTratamiento);
+                    Recibe receta = new Recibe(recibePk,paciente,tratamiento,fechaInicio,fechaFin);
+                    recibeRepositorio = new RecibeRepositorio(session);
+                    recibeRepositorio.guardar(receta);
+
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+
+
+
+            }
+
+
+        }
 
     }
 
