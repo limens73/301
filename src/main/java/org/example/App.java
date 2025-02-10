@@ -1,5 +1,6 @@
 package org.example;
 
+import entidades.Cita;
 import entidades.Doctor;
 import entidades.Paciente;
 import org.hibernate.Session;
@@ -75,7 +76,7 @@ public class App {
                 }
 
                 case 3: {
-                    System.out.println("Opción 3");
+                    asignarDoctorPaciente(session);
                     break;
                 }
 
@@ -117,6 +118,75 @@ public class App {
 
 
         } while (true);
+
+    }
+
+    private static void asignarDoctorPaciente(Session session) {
+
+
+        entrada = new Scanner(System.in);
+
+        System.out.println("Introduce el nombre del doctor");
+        String nombreDoctor = entrada.nextLine();
+
+        List<Doctor> doctores = session.createQuery("select d from Doctor d where d.nombre =: nomD",Doctor.class)
+                .setParameter("nomD",nombreDoctor).getResultList();
+
+        Doctor doctor = null;
+        if (!doctores.isEmpty()) {
+            doctor = doctores.get(0);
+        }
+
+        if (doctor == null) {
+            System.out.println("No se encontró un doctor con ese nombre.");
+        } else {
+
+            int idDoctor = doctor.getId(); // Este es el caso válido en el que sí existe el doctor con el nombre dado.
+            System.out.println("Introduce el nombre del paciente");
+            String nombrePaciente = entrada.nextLine();
+
+            List<Paciente> pacientes = session.createQuery("select p from Paciente p where p.nombre =: nomP",Paciente.class)
+                    .setParameter("nomP",nombrePaciente).getResultList();
+
+            Paciente paciente = null;
+            if (!pacientes.isEmpty()){
+                paciente = pacientes.get(0);
+            }
+            if (paciente == null){
+                System.out.println("No se encontró un paciente con ese nombre.");
+            }else {
+
+                int idPaciente = paciente.getId(); // Este es el caso válido en el que sí existe el paciente con el nombre dado.
+
+                //Ahora debo comprobar que no existan citas asignadas al doctor
+
+                List<Cita> citas = session.createQuery("select c from Cita c where c.doctor.id =:idD",Cita.class)
+                        .setParameter("idD",idDoctor).getResultList();
+
+                if (citas.isEmpty()){ //Este es el caso en que puedo asignar una nueva cita
+
+
+                    LocalDate fechaCita = pedirFecha("Introduce la fecha de la cita con formato dd/mm/aaaa");
+                    System.out.println("Introduce el estado de la cita");
+                    String estado = entrada.nextLine();
+
+                    try {
+
+                        citaRepositorio = new CitaRepositorio(session);
+                        Cita nuevaCita = new Cita(fechaCita,estado,doctor,paciente);
+                        citaRepositorio.guardar(nuevaCita);
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }else{
+                    System.out.println("No se puede asignar cita. El doctor ya tiene asignada una cita.");
+                }
+
+            }
+
+        }
 
     }
 

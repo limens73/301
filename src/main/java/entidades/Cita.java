@@ -1,9 +1,7 @@
 package entidades;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -15,6 +13,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 
 public class Cita {
 
@@ -22,11 +21,14 @@ public class Cita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private int id;
+    @NonNull
     private LocalDate fecha;
+    @NonNull
     private String estado;
 
     @OneToOne
     @JoinColumn(name = "id_doctor",referencedColumnName = "id")
+    @NonNull
     private Doctor doctor;
 
     public void setDoctorBidireccional(Doctor doctor){
@@ -38,6 +40,7 @@ public class Cita {
 
     @ManyToOne
     @JoinColumn(name ="id_paciente", referencedColumnName = "id")
+    @NonNull
     private Paciente paciente;
 
     public void setPacienteBidireccional(Paciente paciente){
