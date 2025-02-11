@@ -85,7 +85,7 @@ public class App {
                 }
 
                 case 5: {
-                    System.out.println("Opción 5");
+                    cambiarHospitalTratamiento(session);
                     break;
                 }
 
@@ -117,6 +117,102 @@ public class App {
 
 
         } while (true);
+
+    }
+
+    private static void cambiarHospitalTratamiento(Session session) {
+
+        entrada = new Scanner(System.in);
+        System.out.println("Introduce el nombre del tratamiento");
+        String tipoTratamiento = entrada.nextLine();
+
+        List<Tratamiento> tratamientos = session.createQuery("select t from Tratamiento t where t.tipo =: nomT", Tratamiento.class)
+                .setParameter("nomT",tipoTratamiento)
+                .getResultList();
+
+        Tratamiento tratamiento = null;
+        if(!tratamientos.isEmpty()){
+            tratamiento = tratamientos.get(0);
+
+        }
+        if(tratamiento == null){
+            System.out.println("No se encontró un tratamiento con ese nombre.");
+        }else{ // Caso en el que continuamos adelante al existir el tratamiento
+
+            int idTratamiento = tratamiento.getId();
+            System.out.println("Introduce el nombre del hospital");
+            String nombreHospital = entrada.nextLine();
+
+            List<Hospital> hospitales = session.createQuery("select h from Hospital h where h.nombre =: nomH",Hospital.class)
+                    .setParameter("nomH",nombreHospital)
+                    .getResultList();
+
+            Hospital hospital = null;
+            if(!hospitales.isEmpty()){
+                hospital = hospitales.get(0);
+            }
+
+            if(hospital == null){
+                System.out.println("No se encontró un hospital con ese nombre");
+            }else{ // Caso válido en el que también existe el hospital y seguimos adelante
+
+                int idHospital = hospital.getId();
+
+                // A continuación pedimos datos del nuevo hospital
+
+                System.out.println("Introduce el nombre del nuevo hospital");
+                String nombreNuevoHospital = entrada.nextLine();
+
+                List<Hospital> nuevoshospitales = session.createQuery("select h from Hospital h where h.nombre =: nomH",Hospital.class)
+                        .setParameter("nomH",nombreNuevoHospital)
+                        .getResultList();
+
+                Hospital nuevoHospital = null;
+                if(!nuevoshospitales.isEmpty()){
+
+                    nuevoHospital = nuevoshospitales.get(0);
+                }
+                if(nuevoHospital == null){
+                    System.out.println("No se encontró un hospital con ese nombre");
+                }else{ // Caso válido en el que es correcto el tratamiento, el hospital y el nuevo hospital
+
+                    int idNuevoHospital = nuevoHospital.getId();
+
+                    List<Tratamiento> tratamientosModificar = session.createQuery("select t from Tratamiento t where t.id =:idT and t.hospital.id =:idH",Tratamiento.class)
+                            .setParameter("idT",idTratamiento).setParameter("idH",idHospital).getResultList();
+
+                    Tratamiento tratamientoModificar = null;
+                    if(!tratamientosModificar.isEmpty()){
+                        tratamientoModificar = tratamientosModificar.get(0);
+                    }
+
+                    if(tratamientoModificar== null){
+
+                        System.out.println("Es posible que el tratamiento no esté asociado al hospital indicado");
+
+                    }else{
+
+
+                        try {
+                            tratamientoModificar.setHospital(nuevoHospital);
+                            tratamientoRepositorio = new TratamientoRepositorio(session);
+                            tratamientoRepositorio.actualizar(tratamientoModificar);
+                        } catch (Exception e) {
+                            System.out.println("Ha ocurrido un error y no se ha podido modificar el hospital asignado al tratamiento");
+                            throw new RuntimeException(e);
+
+                        }
+
+
+                    }
+
+
+                }
+
+            }
+
+        }
+
 
     }
 

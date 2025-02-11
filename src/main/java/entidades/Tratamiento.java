@@ -31,4 +31,12 @@ public class Tratamiento {
     @OneToMany(mappedBy = "tratamiento")
     private Set<Recibe> listaRecibe;
 
+    @Override
+    public String toString() {
+        return "Tratamiento{" +
+                "id=" + id +
+                ", tipo='" + tipo + '\'' +
+                ", costo=" + costo +
+                '}';
+    }
 }
