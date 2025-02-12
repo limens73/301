@@ -68,4 +68,23 @@ public class RecibeRepositorio implements Repositorio <Recibe>{
         trx.commit();
 
     }
+
+    public void mostrarRecibePorIdPaciente(int id){
+
+
+        List<Recibe> recetas = session.createQuery("select r from Recibe r where r.paciente.id=:idP",Recibe.class)
+                .setParameter("idP",id)
+                .getResultList();
+
+        if(!recetas.isEmpty()){
+            for (Recibe r: recetas){
+                System.out.println(r.toString());
+            }
+        }else{
+
+            System.out.println("El paciente no tiene ningún tratamiento en curso");
+        }
+
+
+    }
 }

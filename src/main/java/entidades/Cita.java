@@ -43,6 +43,8 @@ public class Cita {
     @NonNull
     private Paciente paciente;
 
+
+
     public void setPacienteBidireccional(Paciente paciente){
 
         this.paciente = paciente;
@@ -61,4 +63,15 @@ public class Cita {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    @Override
+    public String toString() {
+        return "Citas del paciente: {" +
+                "Paciente= " + paciente.getNombre() +
+                ", fecha cita= " + fecha +
+                ", estado= '" + estado + '\'' +
+                ", doctor= " + doctor.getNombre() +
+                '}';
+    }
+
 }

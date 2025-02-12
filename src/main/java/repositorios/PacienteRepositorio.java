@@ -1,5 +1,6 @@
 package repositorios;
 
+import entidades.Recibe;
 import org.hibernate.Session;
 import entidades.Paciente;
 import org.hibernate.Transaction;
@@ -80,6 +81,33 @@ public class PacienteRepositorio implements Repositorio <Paciente>{
                 .getResultList().get(0);
         trx.commit();
         return paciente;
+    }
+
+    public void mostrarDatosPaciente(int id){
+
+        List<Paciente> pacientes = session.createQuery("select p from Paciente p where p.id=:idP",Paciente.class)
+                .setParameter("idP",id)
+                .getResultList();
+
+        List<Recibe> recetas = session.createQuery("select r from Recibe r where r.paciente.id=:idP",Recibe.class)
+                .setParameter("idP",id)
+                .getResultList();
+
+        for(Paciente p: pacientes){
+            System.out.println(p.toString());
+        }
+
+        if(!recetas.isEmpty()){
+            for (Recibe r: recetas){
+                System.out.println(r.toString());
+            }
+        }else{
+
+            System.out.println("El paciente no tiene ningún tratamiento en curso");
+        }
+
+
+
     }
 
 

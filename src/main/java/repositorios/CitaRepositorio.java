@@ -4,6 +4,7 @@ import entidades.Cita;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CitaRepositorio implements Repositorio <Cita>{
@@ -66,4 +67,17 @@ public class CitaRepositorio implements Repositorio <Cita>{
         trx.commit();
 
     }
+
+    public void mostrarCitasPorIdPaciente(int id){
+
+        List<Cita> citasPaciente = session.createQuery("select c from Cita c where c.paciente.id =:idP",Cita.class)
+                .setParameter("idP",id)
+                .getResultList();
+
+        for(Cita c:  citasPaciente){
+
+            System.out.println(c.toString());
+        }
+    }
+
 }

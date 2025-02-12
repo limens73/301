@@ -90,7 +90,7 @@ public class App {
                 }
 
                 case 6: {
-                    System.out.println("Opción 6");
+                    mostrarDatosPaciente(session);
                     break;
                 }
 
@@ -118,6 +118,35 @@ public class App {
 
         } while (true);
 
+    }
+
+    private static void mostrarDatosPaciente(Session session) {
+
+        entrada = new Scanner(System.in);
+        System.out.println("Introduce el nombre del paciente");
+        String nombrePaciente = entrada.nextLine();
+
+        List<Paciente> pacientes = session.createQuery("select p from Paciente p where p.nombre =: nomP",Paciente.class)
+                .setParameter("nomP",nombrePaciente).getResultList();
+
+        Paciente paciente = null;
+        if (!pacientes.isEmpty()){
+            paciente = pacientes.get(0);
+        }
+        if (paciente == null){
+            System.out.println("No se encontró un paciente con ese nombre.");
+        }else {
+
+            int idPaciente = paciente.getId(); // Este es el caso válido en el que sí existe el paciente con el nombre dado.
+
+            // Mostramos los datos para el idPaciente
+            pacienteRepositorio = new PacienteRepositorio(session);
+            pacienteRepositorio.mostrarDatosPaciente(idPaciente);
+
+
+
+
+        }
     }
 
     private static void cambiarHospitalTratamiento(Session session) {
@@ -462,7 +491,7 @@ public class App {
             session.createQuery("DELETE FROM Cita c WHERE c.paciente = :paciente")
                     .setParameter("paciente", paciente)
                     .executeUpdate();
-            // Luego elimino los registros Rebibe en el que se encuentre el cliente
+            // Luego elimino los registros Recibe en el que se encuentre el cliente
             session.createQuery("DELETE FROM Recibe r WHERE r.paciente = :paciente")
                     .setParameter("paciente", paciente)
                     .executeUpdate();

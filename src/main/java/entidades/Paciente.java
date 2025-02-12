@@ -44,13 +44,16 @@ public class Paciente {
     @OneToMany(mappedBy = "paciente")
     private Set<Recibe> listaRecibe;
 
+
     @Override
     public String toString() {
-        return "Paciente{" +
+        return "\nPaciente{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", fechaNacimiento=" + fechaNacimiento +
                 ", direccion='" + direccion + '\'' +
+                ", \n" + citas +
+               //", Tratamientos=" + listaRecibe +
                 '}';
     }
 }

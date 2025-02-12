@@ -32,4 +32,12 @@ public class Recibe {
     private LocalDate fechaInicio;
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
+
+    @Override
+    public String toString() {
+        return "{" + tratamiento +
+                ", fechaInicio= " + fechaInicio +
+                ", fechaFin= " + fechaFin +
+                '}';
+    }
 }

@@ -35,7 +35,7 @@ public class Tratamiento {
     public String toString() {
         return "Tratamiento{" +
                 "id=" + id +
-                ", tipo='" + tipo + '\'' +
+                ", tipo='" + tipo +
                 ", costo=" + costo +
                 '}';
     }
