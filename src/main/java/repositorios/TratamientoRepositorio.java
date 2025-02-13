@@ -107,8 +107,25 @@ public class TratamientoRepositorio implements Repositorio <Tratamiento> {
             System.out.println("No existen tratamientos para ese hospital");
         }
 
+    }
+
+    public void numeroTratamientosHospital (int id){
+
+        Transaction trx = session.beginTransaction();
 
 
+        Hospital hospital = session.createQuery("select h from Hospital h where h.id =:idH",Hospital.class)
+                .setParameter("idH",id)
+                .getSingleResult();
 
+
+        long numeroTratamientos = (long) session.createQuery("select count(*) from Tratamiento t where t.hospital.id =:idH")
+                .setParameter("idH",id).getSingleResult();
+
+        System.out.println("\n" + hospital);
+
+        trx.commit();
+
+        System.out.println("El número de tratamientos del hospital es de: " + numeroTratamientos + " tratamientos.");
     }
 }

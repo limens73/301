@@ -49,6 +49,7 @@ public class Cita {
 
         this.paciente = paciente;
 
+
     }
 
     @Override

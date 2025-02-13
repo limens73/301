@@ -100,7 +100,7 @@ public class App {
                 }
 
                 case 8: {
-                    System.out.println("Opción 8");
+                    numeroTratamientosPorHospital(session);
                     break;
                 }
 
@@ -117,6 +117,35 @@ public class App {
 
 
         } while (true);
+
+    }
+
+    private static void numeroTratamientosPorHospital(Session session) {
+
+        entrada = new Scanner(System.in);
+        System.out.println("Introduce el nombre del hospital");
+        String nombreHospital = entrada.nextLine();
+
+        List<Hospital> hospitales = session.createQuery("select h from Hospital h where h.nombre =:nomH",Hospital.class)
+                .setParameter("nomH",nombreHospital)
+                .getResultList();
+
+        Hospital hospital= null;
+        if(!hospitales.isEmpty()){
+            hospital = hospitales.get(0);
+        }
+
+        if(hospital == null){
+            System.out.println("No se encontró un hospital con ese nombre");
+        }else{
+
+            int idHospital = hospital.getId();
+            tratamientoRepositorio = new TratamientoRepositorio(session);
+            tratamientoRepositorio.numeroTratamientosHospital(idHospital);
+
+
+
+        }
 
     }
 
