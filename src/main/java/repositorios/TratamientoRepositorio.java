@@ -1,9 +1,11 @@
 package repositorios;
 
+import entidades.Hospital;
 import entidades.Tratamiento;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class TratamientoRepositorio implements Repositorio <Tratamiento> {
@@ -72,5 +74,41 @@ public class TratamientoRepositorio implements Repositorio <Tratamiento> {
         trx.commit();
 
         return ultimoId != null ? ultimoId +1 : 1;
+    }
+
+    public void mostrarTratamientosPorIdHospital(int id){
+
+        Transaction trx = session.beginTransaction();
+        List<Tratamiento> tratamientos = session.createQuery("select t from Tratamiento t where t.hospital.id =:idH",Tratamiento.class)
+                .setParameter("idH",id)
+                .getResultList();
+
+        Hospital hospital = session.createQuery("select h from Hospital h where h.id =:idH",Hospital.class)
+                .setParameter("idH",id)
+                .getSingleResult();
+
+        trx.commit();
+
+        if(hospital != null){
+            System.out.println("\nTratamientos para el hospital: " + hospital.getNombre());
+        }
+
+        if(!tratamientos.isEmpty()){
+
+
+
+            Iterator<Tratamiento> iterator = tratamientos.iterator();
+            while (iterator.hasNext()){
+                Tratamiento t = iterator.next();
+                System.out.println(t.toString());
+            }
+
+        }else{
+            System.out.println("No existen tratamientos para ese hospital");
+        }
+
+
+
+
     }
 }
